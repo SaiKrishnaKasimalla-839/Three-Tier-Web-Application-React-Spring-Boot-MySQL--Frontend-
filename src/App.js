@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+
 const STYLES = `
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Inter:wght@400;500;600&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -213,6 +214,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--fb);overflow-x:hid
 .user-av{width:32px;height:32px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--accent2),var(--accent));display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:13px;font-weight:800;color:#fff}
 .u-name{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .u-role{font-size:10px;color:var(--muted)}
+.logout-btn-full{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;padding:10px 14px;border-radius:9px;background:rgba(239,68,68,0.07);border:1px solid rgba(239,68,68,0.15);color:#f87171;font-family:var(--fb);font-size:13px;font-weight:500;cursor:pointer;transition:background .2s,border-color .2s,transform .15s}
+.logout-btn-full:hover{background:rgba(239,68,68,0.14);border-color:rgba(239,68,68,0.35);transform:translateY(-1px)}
 .logout{background:none;border:none;color:var(--muted);cursor:pointer;font-size:15px;padding:4px;transition:color .2s}
 .logout:hover{color:var(--danger)}
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden}
@@ -611,14 +614,14 @@ function SignIn({onSignIn,onGoSignUp,onGoHome}){
     if(!form.email||!form.password) return setErr("Please fill in all fields.");
     setBusy(true);
     try{
-      const res=await fetch("https://backendserver22-f7eaf3hyhbgpbjh2.canadacentral-01.azurewebsites.net/api/login",{
+      const res=await fetch("http://20.164.2.140:8080/api/login",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({username:form.email,password:form.password})
       });
       const data=await res.text();
       if(!res.ok){ setBusy(false); return setErr(data||"Login failed. Please try again."); }
-     
+      /* ✅ SUCCESS — build user, save session, redirect to Dashboard */
       const raw=form.email.split("@")[0]||"User";
       const userObj={
         email:form.email.trim().toLowerCase(),
@@ -686,7 +689,7 @@ function SignUp({onGoSignIn,onSignUp,onGoHome}){
     if(form.password.length<8) return setErr("Password must be at least 8 characters.");
     setBusy(true);
     try{
-      const res=await fetch("https://backendserver22-f7eaf3hyhbgpbjh2.canadacentral-01.azurewebsites.net/api/signup",{
+      const res=await fetch("http://20.164.2.140:8080/api/signup",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({username:form.email,password:form.password})
@@ -738,14 +741,7 @@ function SignUp({onGoSignIn,onSignUp,onGoHome}){
             <Field label="Mobile Number" icon="📱" type="tel" name="mobile" value={form.mobile} onChange={set} placeholder="+1 555 000 0000"/>
             <Field label="GitHub Username" icon="🐙" name="github" value={form.github} onChange={set} placeholder="octocat"/>
             <Field label="Password" icon="🔒" type="password" name="password" value={form.password} onChange={set} placeholder="Min 8 characters"/>
-             <button
-  className="btn-auth"
-  onClick={handle}
-  disabled={busy}
-  style={{ opacity: busy ? 0.7 : 1 }}
->
-  {busy ? "Creating..." : "Create Account →"}
-</button>       
+            <button className="btn-auth" onClick={handle}>Create Account →</button>
             <div className="auth-footer">By signing up you agree to our <button>Terms</button> & <button>Privacy Policy</button></div>
           </div>
         </div>
@@ -971,9 +967,14 @@ function Dashboard({user,onLogout}){
         <div className="sb-footer">
           <div className="user-chip">
             <div className="user-av">{initials}</div>
-            <div style={{flex:1,minWidth:0}}><div className="u-name">{user.firstName} {user.lastName}</div><div className="u-role">AI Engineer</div></div>
-            <button className="logout" onClick={onLogout} title="Sign out">↩</button>
+            <div style={{flex:1,minWidth:0}}>
+              <div className="u-name">{user.firstName}{user.lastName?" "+user.lastName:""}</div>
+              <div className="u-role">{user.email}</div>
+            </div>
           </div>
+          <button className="logout-btn-full" onClick={onLogout}>
+            <span>🚪</span> Sign Out
+          </button>
         </div>
       </aside>
       <div className="main">
