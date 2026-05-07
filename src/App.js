@@ -614,7 +614,7 @@ function SignIn({onSignIn,onGoSignUp,onGoHome}){
     if(!form.email||!form.password) return setErr("Please fill in all fields.");
     setBusy(true);
     try{
-      const res=await fetch("http://20.164.2.140:8080/api/login",{
+      const res=await fetch("https://backendserver22-f7eaf3hyhbgpbjh2.canadacentral-01.azurewebsites.net/api/login",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({username:form.email,password:form.password})
@@ -689,7 +689,7 @@ function SignUp({onGoSignIn,onSignUp,onGoHome}){
     if(form.password.length<8) return setErr("Password must be at least 8 characters.");
     setBusy(true);
     try{
-      const res=await fetch("http://20.164.2.140:8080/api/signup",{
+      const res=await fetch("https://backendserver22-f7eaf3hyhbgpbjh2.canadacentral-01.azurewebsites.net/api/signup",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({username:form.email,password:form.password})
@@ -741,7 +741,7 @@ function SignUp({onGoSignIn,onSignUp,onGoHome}){
             <Field label="Mobile Number" icon="📱" type="tel" name="mobile" value={form.mobile} onChange={set} placeholder="+1 555 000 0000"/>
             <Field label="GitHub Username" icon="🐙" name="github" value={form.github} onChange={set} placeholder="octocat"/>
             <Field label="Password" icon="🔒" type="password" name="password" value={form.password} onChange={set} placeholder="Min 8 characters"/>
-            <button className="btn-auth" onClick={handle}>Create Account →</button>
+            <button className="btn-auth" onClick={handle} disabled={busy} style={{opacity:busy?0.7:1,cursor:busy?"not-allowed":"pointer"}}>{busy?"Creating account…":"Create Account →"}</button>
             <div className="auth-footer">By signing up you agree to our <button>Terms</button> & <button>Privacy Policy</button></div>
           </div>
         </div>
@@ -1021,7 +1021,7 @@ export default function App(){
     const token=session?JSON.parse(session).token:null;
     try{
       if(token){
-        await fetch("http://20.164.2.140:8080/api/logout",{
+        await fetch("https://backendserver22-f7eaf3hyhbgpbjh2.canadacentral-01.azurewebsites.net/api/logout",{
           method:"POST",
           headers:{"Content-Type":"application/json","Authorization":"Bearer "+token}
         });
