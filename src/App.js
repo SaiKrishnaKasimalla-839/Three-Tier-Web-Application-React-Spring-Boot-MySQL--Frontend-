@@ -675,7 +675,7 @@ function SignUp({onGoSignIn,onSignUp,onGoHome}){
   const [form,setForm]=useState({firstName:"",lastName:"",email:"",mobile:"",github:"",password:""});
   const [err,setErr]=useState("");
   const [ok,setOk]=useState("");
-  const [busy,setBusy]=useState(false);
+//  const [busy,setBusy]=useState(false);
   const set=e=>setForm(p=>({...p,[e.target.name]:e.target.value}));
 
   const handle=async()=>{
