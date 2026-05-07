@@ -675,7 +675,7 @@ function SignUp({onGoSignIn,onSignUp,onGoHome}){
   const [form,setForm]=useState({firstName:"",lastName:"",email:"",mobile:"",github:"",password:""});
   const [err,setErr]=useState("");
   const [ok,setOk]=useState("");
-//  const [busy,setBusy]=useState(false);
+  const [busy,setBusy]=useState(false);
   const set=e=>setForm(p=>({...p,[e.target.name]:e.target.value}));
 
   const handle=async()=>{
@@ -738,7 +738,14 @@ function SignUp({onGoSignIn,onSignUp,onGoHome}){
             <Field label="Mobile Number" icon="📱" type="tel" name="mobile" value={form.mobile} onChange={set} placeholder="+1 555 000 0000"/>
             <Field label="GitHub Username" icon="🐙" name="github" value={form.github} onChange={set} placeholder="octocat"/>
             <Field label="Password" icon="🔒" type="password" name="password" value={form.password} onChange={set} placeholder="Min 8 characters"/>
-            <button className="btn-auth" onClick={handle}>Create Account →</button>
+             <button
+  className="btn-auth"
+  onClick={handle}
+  disabled={busy}
+  style={{ opacity: busy ? 0.7 : 1 }}
+>
+  {busy ? "Creating..." : "Create Account →"}
+</button>       
             <div className="auth-footer">By signing up you agree to our <button>Terms</button> & <button>Privacy Policy</button></div>
           </div>
         </div>
